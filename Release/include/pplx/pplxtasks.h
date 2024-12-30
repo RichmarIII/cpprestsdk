@@ -916,7 +916,7 @@ struct _ExceptionHolder
 private:
     void ReportUnhandledError()
     {
-#if _MSC_VER >= 1800 && defined(__cplusplus_winrt)
+#if defined(_MSC_VER) && _MSC_VER >= 1800 && defined(__cplusplus_winrt)
         if (_M_winRTException != nullptr)
         {
             ::Platform::Details::ReportUnhandledError(_M_winRTException);
@@ -1430,7 +1430,7 @@ struct _ContinuationTaskHandleBase : _UnrealizedChore_t
     virtual ~_ContinuationTaskHandleBase() {}
 };
 
-#if PPLX_TASK_ASYNC_LOGGING
+#if defined(PPLX_TASK_ASYNC_LOGGING) && PPLX_TASK_ASYNC_LOGGING
 // GUID used for identifying causality logs from PPLTask
 const ::Platform::Guid _PPLTaskCausalityPlatformID(
     0x7A76B220, 0xA758, 0x4E6E, 0xB0, 0xE0, 0xD7, 0xC6, 0xD7, 0x4A, 0x88, 0xFE);
@@ -2367,7 +2367,7 @@ private:
     _Task_impl_base const& operator=(_Task_impl_base const&);
 };
 
-#if PPLX_TASK_ASYNC_LOGGING
+#if defined(PPLX_TASK_ASYNC_LOGGING) && PPLX_TASK_ASYNC_LOGGING
 inline void _TaskEventLogger::_LogTaskCompleted()
 {
     if (_M_scheduled)
@@ -2514,7 +2514,7 @@ struct _Task_impl : public _Task_impl_base
             if (_M_Continuations)
             {
                 // Scheduling cancellation with automatic inlining.
-                _ScheduleFuncWithAutoInline([=]() { _RunTaskContinuations(); }, details::_DefaultAutoInline);
+                _ScheduleFuncWithAutoInline([this]() { _RunTaskContinuations(); }, details::_DefaultAutoInline);
             }
         }
         return true;
